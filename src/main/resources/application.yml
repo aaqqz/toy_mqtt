@@ -1,0 +1,23 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: drive-gateway
+#  docker:
+#    compose:
+#      lifecycle-management: start_only
+
+logging:
+  level:
+    com.epikar.drivegateway: debug
+  file:
+    name: logs/application.log  # 로그 파일 경로 및 이름
+
+mqtt:
+  broker-url: ssl://mqtt-dev.epikar.com:8883  # MQTT 브로커 주소
+  client-id: springboot-subscriber            # 이 애플리케이션의 MQTT Client ID
+  topic: seda/device/#                        # 구독할 토픽 (subscribe, #는 와일드카드)
+  username: seda                              # 브로커 로그인 계정
+  password: seda1!                            # 브로커 로그인 비밀번호
+  ca-path: /etc/mosquitto/certs/AmazonRootCA1.pem
