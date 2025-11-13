@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.event;
+package com.epikar.drivegateway.mqtt.common;
 
 public class MqttConstants {
     public static final String DEVICE_NO = "device_no";

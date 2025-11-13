@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.controller;
+package com.epikar.drivegateway.mqtt.controller.request;
 
 import lombok.Getter;
 import lombok.ToString;
