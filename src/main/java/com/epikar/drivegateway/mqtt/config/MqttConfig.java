@@ -46,8 +46,8 @@ public class MqttConfig {
      * MQTT Client Factory (TLS 설정 포함)
      */
     @Bean
-    public MqttPahoClientFactory mqttClient() {
-        DefaultMqttPahoClientFactory client = new DefaultMqttPahoClientFactory();
+    public MqttPahoClientFactory mqttClientFactory() {
+        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
 
         try {
             // MQTT 연결 옵션
@@ -61,12 +61,12 @@ public class MqttConfig {
             // TLS/SSL 설정
             options.setSocketFactory(getSocketFactory(caPath));
 
-            client.setConnectionOptions(options);
+            factory.setConnectionOptions(options);
         } catch (Exception e) {
             throw new RuntimeException("TLS 설정 실패", e);
         }
 
-        return client;
+        return factory;
     }
 
     /**
@@ -93,8 +93,9 @@ public class MqttConfig {
     }
 
     /**
+     * Subscriber 설정
      * 구독용 채널 (Inbound (subscribe))
-     * 브로커 → mqttInbound() → mqttInboundChannel() → 비즈니스 로직으로 전달
+     * 브로커 → mqttInbound() → mqttInboundChannel() → 애플리케이션(비즈니스 로직으로 전달)
      * 수신한 메시지를 mqttInboundChannel()로 보냄 → 이후 다른 @ServiceActivator에서 처리 가능
      */
     @Bean
@@ -106,9 +107,8 @@ public class MqttConfig {
      * 구독 어댑터 (Subscriber)
      */
     @Bean
-    public MessageProducer mqttInbound(MqttPahoClientFactory mqttClientFactory) {
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId + "-inbound", mqttClientFactory, topic);
-
+    public MessageProducer inbound(MqttPahoClientFactory factory) {
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId + "-sub", factory, topic);
         adapter.setCompletionTimeout(5000);
         adapter.setQos(1);
         adapter.setOutputChannel(mqttInboundChannel());
@@ -117,6 +117,7 @@ public class MqttConfig {
     }
 
     /**
+     * Publisher 설정
      * 발행용 채널 (Outbound (publish))
      * 애플리케이션 → mqttOutboundChannel() → mqttOutbound() → 브로커
      * mqttOutboundChannel()에 메시지를 넣으면 자동으로 MQTT 브로커로 전송
@@ -131,9 +132,8 @@ public class MqttConfig {
      */
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
-    public MessageHandler mqttOutbound(MqttPahoClientFactory mqttClientFactory) {
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId + "-outbound", mqttClientFactory);
-
+    public MessageHandler outbound(MqttPahoClientFactory factory) {
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId + "-pub", factory);
         messageHandler.setAsync(true); // 비동기 발행 (성능 향상)
 
         return messageHandler;

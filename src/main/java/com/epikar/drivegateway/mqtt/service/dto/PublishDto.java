@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.event.dto;
+package com.epikar.drivegateway.mqtt.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -8,12 +8,12 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.epikar.drivegateway.mqtt.event.MqttConstants.*;
+import static com.epikar.drivegateway.mqtt.common.MqttConstants.*;
 
 @Getter
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OutboundDto {
+public class PublishDto {
 
     private final String device_no;
     private final String message_type;
@@ -22,7 +22,7 @@ public class OutboundDto {
     private final Body body;
 
     @Builder
-    public OutboundDto(String device_no, String message_id, boolean isSuccess) {
+    public PublishDto(String device_no, String message_id, boolean isSuccess) {
         this.device_no = device_no;
         this.message_type = MESSAGE_TYPE_RESPONSE;
         this.message_id = Integer.parseInt(message_id);
