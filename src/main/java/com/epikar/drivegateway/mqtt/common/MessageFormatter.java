@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.listener;
+package com.epikar.drivegateway.mqtt.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static com.epikar.drivegateway.mqtt.common.MqttConstants.DEVICE_NO;
-import static com.epikar.drivegateway.mqtt.common.MqttConstants.MESSAGE_ID;
+import static com.epikar.drivegateway.mqtt.common.MqttConstants.*;
 
 @Slf4j
 @Component
@@ -26,14 +25,31 @@ public class MessageFormatter {
     }
 
     public String extractDeviceNo(String payload) throws JsonProcessingException {
-        return extractJsonField(payload, DEVICE_NO);
+        return extractJsonFieldToString(payload, DEVICE_NO);
     }
 
     public String extractMessageId(String payload) throws JsonProcessingException {
-        return extractJsonField(payload, MESSAGE_ID);
+        return extractJsonFieldToString(payload, MESSAGE_ID);
     }
 
-    public String extractJsonField(String payload, String fieldName) throws JsonProcessingException {
+    public MessageType extractMessageType(String payload) throws JsonProcessingException {
+        return extractJsonFieldToMessageType(payload, MESSAGE_TYPE);
+    }
+
+    private MessageType extractJsonFieldToMessageType(String payload, String messageType) throws JsonProcessingException {
+        JsonNode jsonNode = objectMapper.readTree(payload);
+        JsonNode fieldNode = jsonNode.get(messageType);
+
+        if (fieldNode != null) {
+            MessageType value = MessageType.valueOf(fieldNode.asText().toUpperCase());
+            log.debug("extracted field {} >> {}", messageType, value.name());
+            return value;
+        }
+
+        throw new IllegalArgumentException(messageType + " 필드를 찾을 수 없습니다.");
+    }
+
+    private String extractJsonFieldToString(String payload, String fieldName) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(payload);
         JsonNode fieldNode = jsonNode.get(fieldName);
 

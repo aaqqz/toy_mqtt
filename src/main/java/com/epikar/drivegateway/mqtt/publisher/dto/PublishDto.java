@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.service.dto;
+package com.epikar.drivegateway.mqtt.publisher.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

@@ -1,6 +1,6 @@
-package com.epikar.drivegateway.mqtt.service;
+package com.epikar.drivegateway.mqtt.publisher;
 
-import com.epikar.drivegateway.mqtt.service.dto.PublishDto;
+import com.epikar.drivegateway.mqtt.publisher.dto.PublishDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ public class MqttPublisherService {
     public void publish(String topic, PublishDto publishDto) {
         try {
             String payload = objectMapper.writeValueAsString(publishDto);
+
             mqttOutboundChannel.send(
                     MessageBuilder
                             .withPayload(payload)

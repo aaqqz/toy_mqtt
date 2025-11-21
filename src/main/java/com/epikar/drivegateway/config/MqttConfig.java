@@ -1,4 +1,4 @@
-package com.epikar.drivegateway.mqtt.config;
+package com.epikar.drivegateway.config;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +59,10 @@ public class MqttConfig {
             options.setAutomaticReconnect(true);
 
             // TLS/SSL 설정
-            options.setSocketFactory(getSocketFactory(caPath));
+            // SSL 환경일 때만 TLS 설정 적용
+            if (brokerUrl.startsWith("ssl://")) {
+                options.setSocketFactory(getSocketFactory(caPath));
+            }
 
             factory.setConnectionOptions(options);
         } catch (Exception e) {

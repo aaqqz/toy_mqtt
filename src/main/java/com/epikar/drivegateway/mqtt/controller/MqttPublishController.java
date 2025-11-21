@@ -1,8 +1,8 @@
 package com.epikar.drivegateway.mqtt.controller;
 
 import com.epikar.drivegateway.mqtt.controller.request.PublishRequest;
-import com.epikar.drivegateway.mqtt.service.MqttPublisherService;
-import com.epikar.drivegateway.mqtt.service.dto.PublishDto;
+import com.epikar.drivegateway.mqtt.publisher.MqttPublisherService;
+import com.epikar.drivegateway.mqtt.publisher.dto.PublishDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

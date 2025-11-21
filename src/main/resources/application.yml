@@ -1,18 +1,47 @@
-server:
-  port: 8090
+spring.application.name: commerce-core-api
+spring.profiles.active: local
 
-spring:
-  application:
-    name: drive-gateway
-#  docker:
-#    compose:
-#      lifecycle-management: start_only
+server.port: 8090
 
 logging:
   level:
     com.epikar.drivegateway: debug
   file:
     name: logs/application.log  # 로그 파일 경로 및 이름
+
+---
+spring.config.activate.on-profile: local
+server:
+  docker:
+    compose:
+      lifecycle-management: start_only
+      enabled: true
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3390/drive-gateway
+    username: user
+    password: qwer1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mqtt:
+  broker-url: tcp://localhost:1883
+  client-id: springboot-subscriber
+  topic: seda/device/#
+  username: seda
+  password: seda1!
+  ca-path: none
+
+---
+spring.config.activate.on-profile: dev
+
+
+---
+spring.config.activate.on-profile: staging
+
+
+---
+spring.config.activate.on-profile: live
 
 mqtt:
   broker-url: ssl://mqtt-dev.epikar.com:8883  # MQTT 브로커 주소
